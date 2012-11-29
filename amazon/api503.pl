@@ -23,7 +23,7 @@ sub GetSignedURIByISBN{
         "Version"        => "2007-10-29",
         "Operation"      => "ItemSearch",#検索
         "Keywords"       => $_[0],
-        "SearchIndex"    => "Books",
+        "SearchIndex"    => "All",
         #"ItemId"         => $_[0], # 引数で受け取ったISBNが入る
         "ResponseGroup"  => "Medium",
         "ContentType"    => "text/xml",
