@@ -1,0 +1,22 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use HTML::TagParser;
+
+my $html = HTML::TagParser->new( "http://www.kawa.net/xp/index-e.html" );
+my @list = $html->getElementsByTagName( "a" );
+foreach my $elem ( @list ) {
+    my $tagname = $elem->tagName;
+    my $attr = $elem->attributes;
+    my $text = $elem->innerText;
+    print "<$tagname";
+    foreach my $key ( sort keys %$attr ) {
+        print " $key=\"$attr->{$key}\"";
+    }
+    if ( $text eq "" ) {
+        print " />\n";
+    } else {
+        print ">$text</$tagname>\n";
+    }
+}

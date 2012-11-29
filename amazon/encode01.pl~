@@ -1,0 +1,16 @@
+#!/use/bin/perl
+
+use strict;
+use warnings;
+use Encode;
+
+my $str = "%A4%A2%A4%D9+%A4%DE%A4%EA%A4%A2";#shiftjis
+print $str,"\n";
+
+$str = decode('euc-jp', $str);
+print $str,"\n";
+
+my $utf = Encode::from_to($str,'euc-jp','utf8');
+
+print $utf,"\n";
+

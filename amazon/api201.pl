@@ -1,0 +1,35 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Digest::SHA qw(hmac_sha256_base64);
+use DateTime;
+use URI::Escape;
+  
+use constant ACCESS_KEY_ID     => 'AKIAIO4F32K7CCUII6KA';
+use constant SECRET_ACCESS_KEY => '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';
+  
+my $dt = DateTime->now;
+my $config = {
+    Service        => 'AWSECommerceService',
+    AWSAccessKeyId => ACCESS_KEY_ID,
+    Keywords       => 'aaaa',
+    SearchIndex    => 'Music',
+    Operation      => 'ItemSearch',
+    ResponseGroup  => uri_escape('Tracks,ItemAttributes,Images'),
+    Version        => '2009-01-06',            # 追加
+    Timestamp      => uri_escape("$dt") . 'Z', # 追加
+};
+ 
+my $use_config = join '&', map { $_ . '=' . $config->{$_} } sort keys %$config;
+my $signature = "GET\nwebservices.amazon.co.jp\n/onca/xml\n$use_config";
+my $hashed_signature = hmac_sha256_base64($signature, SECRET_ACCESS_KEY);
+ 
+while (length($hashed_signature) % 4) {
+    $hashed_signature .= '=';
+}
+ 
+my $response = 'http://webservices.amazon.co.jp/onca/xml?' . $use_config . '&Signature=' . uri_escape($hashed_signature);
+
+print $response;

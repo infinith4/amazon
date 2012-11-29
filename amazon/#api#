@@ -1,0 +1,45 @@
+
+<html lang="ja">
+<head>
+<base href="http://www.kawa.net/works/perl/html/tagparser.html">
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<title>[Perl] HTML::TagParser - HTMLソースの解析／属性値やinnerTextの取得</title>
+<link rel="stylesheet" type="text/css" href="../../perl/blue.css">
+<link rel="stylesheet" type="text/css" href="http://www.kawa.net/service/com/ajaxcom.css">
+<script src="http://www.kawa.net/service/com/ajaxcom.js"></script>
+<script src="http://www.kawa.net/service/com/ajaxcom-lang-ja.js" charset="UTF-8"></script>
+<script src="http://www.kawa.net/rss/sbm-users.js"></script>
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://www.kawa.net/index.rdf">
+<style><!--
+    pre b {
+        color: #990000;
+    }
+--></style>
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+</head>
+<body>
+<h1>
+
+<a class="lang" href="tagparser-e.html"><img src="http://www.kawa.net/xp/images/lang-eng-24x16.gif" align="right" width="24" height="16" alt="English"></a>
+<a class="lang" href="tagparser.html"><img src="http://www.kawa.net/xp/images/lang-jpn-24x16.gif" align="right" width="24" height="16" alt="Japanese"></a>
+
+<a href="http://www.kawa.net/xp/index-j.html"><span class="kawanet">Kawa.net</span><span class="xp">xp</span></a>
+[Perl] HTML::TagParser - HTMLソースの解析／属性値やinnerTextの取得
+</h1>
+
+<p>
+HTML::TagParser は、HTML ソースコードの解析を行う Perl モジュールです。<br/>
+DOM 風のインターフェースで、各 HTML タグごとに属性値やinnerText値を取得できます。<br/>
+Pure Perl 実装ですので、コンパイル不要で手軽に利用できます。<br/>
+ページ中の特定のタグの内容を抽出したり、リンクを辿っていくスクリプトなどで利用できます。<br/>
+<br>
+Encode.pm バージョン 2.10～2.12 間で発生していた FB_XMLCREF 問題に対応しました。(2006/11/01)<br>
+Encode::FB_XMLCREF でなく Encode::XMLCREF を利用します。（効果は同じです）<br>
+2.12 は既に最新バージョンではありませんが、Perl 5.8.7-8 のデフォルトのため影響が大きいです。
+</p>
+
+<p>
+HTML::TagParser と似たモジュールとしては、
+<a href="http://search.cpan.org/perldoc?HTML::TokeParser">HTML::TokeParser</a>
+が挙げられます。
+</p>

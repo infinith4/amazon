@@ -1,0 +1,10 @@
+<html>
+<head>
+<title></title>
+</head>
+<body>
+<form action="/" method="post">
+<input type="text" name="url" size="60" maxlength="100">
+</form>
+</body>
+</html>

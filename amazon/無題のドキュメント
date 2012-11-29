@@ -1,0 +1,67 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use LWP::UserAgent qw($ua get);
+use MIME::Base64;
+use XML::XPath;
+use Date::Format;
+
+# Define the parameters in the REST request.
+# Customer cannot change the following values.
+my $EndPoint = "http://ecs.amazonaws.jp/onca/xml";
+my $service = "AWSECommerceService";
+my $accesskey = "XXXXXXXXXX";
+my $operation = "ListLookup";
+my $listType = "WishList";
+my $listId="AAAAAAAA";
+my $responseGroup="ItemAttributes";
+my $condition="All";
+my $version = "2008-08-19";
+
+for(my $productPage=1; $productPage<=999; $productPage++){
+# Assemble the REST request URL.
+    my $request =
+        "$EndPoint?" .
+        "Service=$service&" .
+        "AWSAccessKeyId=$accesskey&" .
+        "Operation=$operation&" .
+        "ListType=$listType&" .
+        "ListId=$listId&" .
+        "ResponseGroup=$responseGroup&" .
+        "Condition=$condition&" .
+        "ProductPage=$productPage&" .
+        "Version=$version";
+
+# Send the request using HTTP GET.
+    my $ua = new LWP::UserAgent;
+    $ua->timeout(30);
+    my $response = $ua->get($request);
+    my $xml = $response->content;
+    
+    my $xp = XML::XPath->new(xml => $xml);
+    
+##XPathを使ってエラーがあれば、ブレイク
+    if ( $xp->find("//Error") )
+    {
+#        print "There was an error processing your request:\n", 
+#        "  Error code: ", $xp->findvalue("//Error/Code"), "\n",
+#        "  ", $xp->findvalue("//Error/Message"), "\n\n";
+        last;
+    }
+    
+#Xpathをつかって、アイテム１つ１つに対して、処理を行う。
+    {
+        for (my $i=1; $i<=10; $i++){
+            if (! $xp->find("/ListLookupResponse/Lists/List/ListItem[$i]")){
+                last;
+            }
+#            print "ASIN  : ", $xp->findvalue("/ListLookupResponse/Lists/List/ListItem[$i]/Item/ASIN"),"\n";
+#            print "detailPageUrl  : ", $xp->findvalue("/ListLookupResponse/Lists/List/ListItem[$i]/Item/DetailPageURL"),"\n";
+#            print "Author: ", $xp->find("/ListLookupResponse/Lists/List/ListItem[$i]/Item/ItemAttributes/Author"), "\n";
+#            print "ISBN: ", $xp->find("/ListLookupResponse/Lists/List/ListItem[$i]/Item/ItemAttributes/ISBN"), 
+            print"TITLE:", $xp->find("/ListLookupResponse/Lists/List/ListItem[$i]/Item/ItemAttributes/Title"), "  ";
+            print "Price: ", $xp->find("/ListLookupResponse/Lists/List/ListItem[$i]/Item/ItemAttributes/ListPrice/FormattedPrice"), "\n";
+        }
+    }    
+}

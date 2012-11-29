@@ -1,0 +1,28 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use HTML::TagParser;
+
+#use Jcode;
+
+my $html = HTML::TagParser->new( "http://www.amazon.co.jp/product-reviews/482224816X/ref=cm_cr_pr_fltrmsg?ie=UTF8&showViewpoints=0" );
+#print $html;
+#$html = Jcode::convert( $html , "utf8" );
+
+#my @list = $html->getElementsByTagName( "div" );
+my @list = $html->getElementsByAttribute( "margin-left:0.5em;","style" );
+foreach my $elem ( @list ) {
+    my $tagname = $elem->tagName;
+    my $attr = $elem->attributes;
+    my $text = $elem->innerText;
+    print "<$tagname";
+    foreach my $key ( sort keys %$attr ) {
+        print " $key=\"$attr->{$key}\"";
+    }
+    if ( $text eq "" ) {
+        print " />\n";
+    } else {
+        print ">$text</$tagname>\n";
+    }
+}

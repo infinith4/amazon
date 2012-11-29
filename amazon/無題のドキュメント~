@@ -1,0 +1,16 @@
+my $key = 'AKIAIO4F32K7CCUII6KA';
+my $secret = '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';
+my $amazon_api = URI::Amazon::APA->new('http://ecs.amazonaws.jp/onca/xml');
+my $amazon_track = '●●track名●●';
+$amazon_api->query_form(
+    Service     => 'AWSECommerceService',
+    Operation   => 'ItemSearch',
+    Keywords       => '●●商品検索キーワード●●',
+    SearchIndex => 'All',
+    ResponseGroup => 'Medium',
+    AssociateTag => $amazon_track,
+);
+$amazon_api->sign(
+    key    => $key,
+    secret => $secret,
+);
