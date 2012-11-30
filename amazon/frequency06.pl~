@@ -6,6 +6,7 @@ use Encode;
 use HTML::TreeBuilder;
 use URI::Escape;
 use Digest::SHA qw(hmac_sha256_base64);
+use LWP::UserAgent;
 
 my $itemurl ="http://www.amazon.co.jp/%E3%82%B9%E3%83%86%E3%82%A3%E3%83%BC%E3%83%96%E3%83%BB%E3%82%B8%E3%83%A7%E3%83%96%E3%82%BA-%E9%A9%9A%E7%95%B0%E3%81%AE%E3%83%97%E3%83%AC%E3%82%BC%E3%83%B3%E2%80%95%E4%BA%BA%E3%80%85%E3%82%92%E6%83%B9%E3%81%8D%E3%81%A4%E3%81%91%E3%82%8B18%E3%81%AE%E6%B3%95%E5%89%87-%E3%82%AB%E3%83%BC%E3%83%9E%E3%82%A4%E3%83%B3%E3%83%BB%E3%82%AC%E3%83%AD/dp/482224816X/ref=pd_sim_b_3";
 
@@ -35,85 +36,47 @@ foreach (@namelist){
 }
 =cut
 
-=pod
-
-#「この商品を買った人はこんな商品も買っています」 に表示されている商品名取得
-
-my @listfaceout = $html->getElementsByClassName( "new-faceout fixed-line" );
-
-foreach my $elem (@listfaceout){
-    
-    my $text = $elem -> innerText;
-    
-    #$text = decode('Shift_JIS', $text);
-    #print $text,"\n";
-    chomp($text);
-    $text =~ s/^ *(.*?) *$/$1/;
-
-    #$text = encode('UTF-8' , $text );
-    $text =~ s/&#[0-9]*//g;
-    $text =~ s/\r|\n//;
-    $text =~ s/\n//;
-    print $text,"\n";
-}
-
-=cut
-
-use LWP::UserAgent;
-
  
-# IE8のフリをする
 my $user_agent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)";
- 
-# LWPを使ってサイトにアクセスし、HTMLの内容を取得する
 my $ua = LWP::UserAgent->new(agent => $user_agent);
 my $res = $ua->get($itemurl);
 my $content = $res->decoded_content;
- 
-# HTML::TreeBuilderで解析する
 my $tree = HTML::TreeBuilder->new;
 $tree->parse($content);
 
 #「この商品を買った人はこんな商品も買っています」 に表示されている商品のURL
 my @items =  $tree->look_down('class', 'new-faceout fixed-line');
+my @buyitem = ();
 
 foreach (@items){
         print $_->find("a")->attr('href'),"\n";
+        push(@buyitem ,$_->find("a")->attr('href'));
 }
+
+my $buyitems = $tree->look_down('id','purchaseSimsData')->as_text;
+#print $items,"\n";
+my @morebuylist = split(/,/, $buyitems);
+print "@morebuylist\n";
+
+my @buylist = ();
+foreach (@morebuylist){
+
+    push(@buylist, "http://www.amazon.co.jp/dp/".$_);
+}
+print "@buylist\n";
 
 #商品URLからレビューのURLを取得
 my @review =  $tree->look_down('class', 'histogramButton');
 
 #print "================review\n";
 #print $review[0]->find("a")->attr('href'),"\n";
-my $itemreview = $review[0]->find("a")->attr('href');
+my $itemreview = $review[0]->find("a")->attr('href');#商品のレビューのURL
 
 
 #Reviewの評価
 
 $html = HTML::TagParser->new( "$itemreview" );
 
-=pod
-use LWP::UserAgent;
- 
-my $user_agent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)";
- 
-my $ua = LWP::UserAgent->new(agent => $user_agent);
-my $res = $ua->get($url);
-my $content = $res->decoded_content;
-
-my $tree = HTML::TreeBuilder->new;
-$tree->parse($content);
-
-#reviewが10件より多い時はのurlを取得する 
-my $items =  $tree->look_down('class', 'CMpaginate')->find('a')->attr("href");
-
-print $items,"\n";
-
-
-$item =~ s/cm_cr_pr_top_link_6/cm_cr_pr_top_link_6/g;
-
-=cut
 
 my $elem = $html->getElementsByTagName( "body" );
 
@@ -285,3 +248,4 @@ sub GetTimeStamp {
 
 # コマンド引数からISBNを受け取り、リクエストURIを表示
 print &GetSignedURIByISBN($ARGV[0])."\n";
+
