@@ -73,7 +73,7 @@ my @review =  $tree->look_down('class', 'histogramButton');
 my $itemreview = $review[0]->find("a")->attr('href');#商品のレビューのURL
 
 
-#Reviewの評価
+#@buylistのReviewについて評価
 
 $html = HTML::TagParser->new( "$itemreview" );
 
